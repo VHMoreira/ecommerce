@@ -19,9 +19,9 @@ class CartItem {
 class Cart with ChangeNotifier {
   Map<String, CartItem> _items = {};
 
-  Map<String, CartItem> get item => {..._items};
+  Map<String, CartItem> get items => {..._items};
 
-  int get itemCount => _items.length;
+  int get itemsCount => _items.length;
 
   double get totalAmount {
     double total = 0.0;
