@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop/components/app_drawer.dart';
 import 'package:shop/components/product_item.dart';
 import 'package:shop/providers/products.dart';
+import 'package:shop/utils/app_routes.dart';
 
 class ProductsScreen extends StatelessWidget {
   @override
@@ -18,7 +19,7 @@ class ProductsScreen extends StatelessWidget {
             color: Theme.of(context).primaryIconTheme.color,
             icon: Icon(Icons.add),
             onPressed: (){
-
+              Navigator.of(context).pushNamed(AppRoutes.PRODUCTS_FORM);
             },
           )
         ],
