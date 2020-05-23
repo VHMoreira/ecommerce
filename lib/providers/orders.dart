@@ -17,13 +17,14 @@ class Orders with ChangeNotifier{
 
   List<Order> get orders => [..._orders];
 
-  void addOrder(List<CartItem> products, double total){
-    final total = products.fold(0.0, (t, i) => t * (i.price * i.quantity));
+  int get itemsCount => _orders.length;
+
+  void addOrder(Cart cart){
     _orders.insert(0, Order(
       id: Random().nextDouble().toString(),
-      total: total,
+      total: cart.totalAmount,
       date: DateTime.now(),
-      products: products,
+      products: cart.items.values.toList(),
     ));
 
     notifyListeners();
