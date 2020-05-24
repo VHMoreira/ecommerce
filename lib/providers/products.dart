@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:shop/data/dummy_data.dart';
 import 'package:shop/providers/product.dart';
@@ -27,6 +26,20 @@ class Products with ChangeNotifier {
       imageUrl: newProduct.imageUrl
     ));
     notifyListeners();
+  }
+
+  void updateProduct(Product product){
+    if(product == null || product.id == null){
+      return;
+    }
+
+    final index = _items.indexWhere((p) => p.id == product.id);
+
+    if(index >= 0){
+      _items[index] = product;
+      notifyListeners();
+    }
+
   }
 
   // void showFavoritesOnly() {
