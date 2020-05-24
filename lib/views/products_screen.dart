@@ -6,9 +6,13 @@ import 'package:shop/providers/products.dart';
 import 'package:shop/utils/app_routes.dart';
 
 class ProductsScreen extends StatelessWidget {
+
+  Future<void> _refreshProducts(BuildContext context){
+    return Provider.of<Products>(context, listen: false).loadProducts();
+  }
+
   @override
   Widget build(BuildContext context) {
-
     final products = Provider.of<Products>(context);
 
     return Scaffold(
@@ -18,26 +22,28 @@ class ProductsScreen extends StatelessWidget {
           IconButton(
             color: Theme.of(context).primaryIconTheme.color,
             icon: Icon(Icons.add),
-            onPressed: (){
+            onPressed: () {
               Navigator.of(context).pushNamed(AppRoutes.PRODUCTS_FORM);
             },
           )
         ],
       ),
       drawer: AppDrawer(),
-      body: Padding(
-        padding: EdgeInsets.all(8),
-        child: ListView.builder(
-          itemCount: products.itemsCount,
-          itemBuilder: (ctx, i) => Column(
-            children: <Widget>[
-              ProductItem(products.items[i]),
-              Divider()
-            ],
+      body: RefreshIndicator(
+        onRefresh: () => _refreshProducts(context),
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: ListView.builder(
+            itemCount: products.itemsCount,
+            itemBuilder: (ctx, i) => Column(
+              children: <Widget>[
+                ProductItem(products.items[i]),
+                Divider(),
+              ],
+            ),
           ),
         ),
       ),
-      
     );
   }
 }

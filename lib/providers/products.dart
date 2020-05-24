@@ -1,12 +1,11 @@
 import 'dart:convert';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shop/data/dummy_data.dart';
 import 'package:shop/providers/product.dart';
 
 class Products with ChangeNotifier {
-  List<Product> _items = DUMMY_PRODUCTS;
+  final String _url = 'https://vitorshop-e7b3d.firebaseio.com/products.json';
+  List<Product> _items = [];
 
   // bool _showFavoritesOnly = false;
 
@@ -18,11 +17,28 @@ class Products with ChangeNotifier {
 
   int get itemsCount => _items.length;
 
-  Future<void> addProduct(Product newProduct) async {
-    const url = 'https://vitorshop-e7b3d.firebaseio.com/products.json';
+  Future<void> loadProducts() async {
+    final res = await http.get(_url);
+    Map<String, dynamic> data = json.decode(res.body);
+    if (data != null && _items.isEmpty) {
+      data.forEach((productId, payload) {
+        _items.add(
+          Product(
+              id: productId,
+              title: payload['title'],
+              description: payload['description'],
+              price: payload['price'],
+              imageUrl: payload['imageUrl'],
+              isFavorite: payload['isFavorite']),
+        );
+        notifyListeners();
+      });
+    }
+  }
 
+  Future<void> addProduct(Product newProduct) async {
     final res = await http.post(
-      url,
+      _url,
       body: json.encode({
         'title': newProduct.title,
         'description': newProduct.description,
@@ -33,15 +49,15 @@ class Products with ChangeNotifier {
     );
 
     _items.add(
-        Product(
-          id: json.decode(res.body)['name'],
-          title: newProduct.title,
-          description: newProduct.description,
-          price: newProduct.price,
-          imageUrl: newProduct.imageUrl,
-        ),
-      );
-      notifyListeners();
+      Product(
+        id: json.decode(res.body)['name'],
+        title: newProduct.title,
+        description: newProduct.description,
+        price: newProduct.price,
+        imageUrl: newProduct.imageUrl,
+      ),
+    );
+    notifyListeners();
   }
 
   void updateProduct(Product product) {

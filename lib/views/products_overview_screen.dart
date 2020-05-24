@@ -4,6 +4,7 @@ import 'package:shop/components/app_drawer.dart';
 import 'package:shop/components/badge.dart';
 import 'package:shop/components/product_grid.dart';
 import 'package:shop/providers/cart.dart';
+import 'package:shop/providers/products.dart';
 import 'package:shop/utils/app_routes.dart';
 
 class ProductOverviewScreen extends StatefulWidget {
@@ -13,6 +14,17 @@ class ProductOverviewScreen extends StatefulWidget {
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   bool _showFavoriteOnly = false;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<Products>(context, listen: false).loadProducts().then((_) {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +62,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
             child: IconButton(
               icon: Icon(Icons.shopping_cart),
               onPressed: () {
-                Navigator.of(context).pushNamed(
-                  AppRoutes.CART
-                );
+                Navigator.of(context).pushNamed(AppRoutes.CART);
               },
             ),
             builder: (_, cart, child) => Badge(
@@ -62,7 +72,11 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           )
         ],
       ),
-      body: ProductGrid(_showFavoriteOnly),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductGrid(_showFavoriteOnly),
       drawer: AppDrawer(),
     );
   }
