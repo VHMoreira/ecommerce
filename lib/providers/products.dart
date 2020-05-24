@@ -18,10 +18,9 @@ class Products with ChangeNotifier {
 
   int get itemsCount => _items.length;
 
-  void addProduct(Product newProduct) {
+  Future<void> addProduct(Product newProduct) {
     const url = 'https://vitorshop-e7b3d.firebaseio.com/products.json';
-    http
-        .post(
+    return http.post(
       url,
       body: json.encode({
         'title': newProduct.title,
@@ -30,8 +29,7 @@ class Products with ChangeNotifier {
         'imageUrl': newProduct.imageUrl,
         'isFavorite': newProduct.isFavorite
       }),
-    )
-    .then((res) {
+    ).then((res) {
       
       _items.add(
         Product(
