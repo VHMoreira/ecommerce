@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:shop/data/dummy_data.dart';
 import 'package:shop/providers/product.dart';
 
@@ -17,13 +19,31 @@ class Products with ChangeNotifier {
   int get itemsCount => _items.length;
 
   void addProduct(Product newProduct) {
-    _items.add(Product(
-        id: Random().nextDouble().toString(),
-        title: newProduct.title,
-        description: newProduct.description,
-        price: newProduct.price,
-        imageUrl: newProduct.imageUrl));
-    notifyListeners();
+    const url = 'https://vitorshop-e7b3d.firebaseio.com/products.json';
+    http
+        .post(
+      url,
+      body: json.encode({
+        'title': newProduct.title,
+        'description': newProduct.description,
+        'price': newProduct.price,
+        'imageUrl': newProduct.imageUrl,
+        'isFavorite': newProduct.isFavorite
+      }),
+    )
+    .then((res) {
+      
+      _items.add(
+        Product(
+          id: json.decode(res.body)['name'],
+          title: newProduct.title,
+          description: newProduct.description,
+          price: newProduct.price,
+          imageUrl: newProduct.imageUrl,
+        ),
+      );
+      notifyListeners();
+    });
   }
 
   void updateProduct(Product product) {
@@ -41,7 +61,7 @@ class Products with ChangeNotifier {
 
   void deleteProduct(String id) {
     final index = _items.indexWhere((p) => p.id == id);
-    if(index >= 0){
+    if (index >= 0) {
       _items.removeWhere((p) => p.id == id);
       notifyListeners();
     }
