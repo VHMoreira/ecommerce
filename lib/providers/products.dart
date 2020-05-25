@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shop/exceptions/http_exception.dart';
 import 'package:shop/providers/product.dart';
+import 'package:shop/utils/constants.dart';
 
 class Products with ChangeNotifier {
-  final String _baseurl = 'https://vitorshop-e7b3d.firebaseio.com/products';
+  final String _baseurl = '${Constants.BASE_API_URL}/products';
   List<Product> _items = [];
 
   // bool _showFavoritesOnly = false;
